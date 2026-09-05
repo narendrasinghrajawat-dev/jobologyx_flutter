@@ -106,3 +106,36 @@ class RecruiterNavItems {
     ),
   ];
 }
+
+/// The admin's four tabs (§52) — no Profile tab for admin per spec; logout
+/// lives in the dashboard's app bar instead.
+class AdminNavItems {
+  AdminNavItems._();
+
+  static const List<AppBottomNavItem> items = [
+    AppBottomNavItem(
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard_rounded,
+      label: "Dashboard",
+      route: AppRoutes.adminDashboard,
+    ),
+    AppBottomNavItem(
+      icon: Icons.people_outline_rounded,
+      activeIcon: Icons.people_rounded,
+      label: "Users",
+      route: AppRoutes.adminUsers,
+    ),
+    AppBottomNavItem(
+      icon: Icons.work_outline_rounded,
+      activeIcon: Icons.work_rounded,
+      label: "Jobs",
+      route: AppRoutes.adminJobs,
+    ),
+    AppBottomNavItem(
+      icon: Icons.article_outlined,
+      activeIcon: Icons.article_rounded,
+      label: "Applications",
+      route: AppRoutes.adminApplications,
+    ),
+  ];
+}

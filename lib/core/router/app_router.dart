@@ -12,6 +12,10 @@ import '../../features/applications/presentation/screens/my_applications_screen.
 import '../../features/jobs/presentation/screens/home_screen.dart';
 import '../../features/jobs/presentation/screens/job_details_screen.dart';
 import '../../features/jobs/presentation/screens/job_list_screen.dart';
+import '../../features/admin/presentation/screens/admin_applications_screen.dart';
+import '../../features/admin/presentation/screens/admin_dashboard_screen.dart';
+import '../../features/admin/presentation/screens/admin_jobs_screen.dart';
+import '../../features/admin/presentation/screens/admin_users_screen.dart';
 import '../../features/jobs/presentation/screens/seeker_dashboard_screen.dart';
 import '../../features/profile/presentation/screens/recruiter_profile_screen.dart';
 import '../../features/profile/presentation/screens/seeker_profile_screen.dart';
@@ -115,10 +119,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: AppRoutes.recruiterApplications, builder: (context, state) => const RecruiterApplicationsScreen()),
       GoRoute(path: AppRoutes.recruiterProfile, builder: (context, state) => const RecruiterProfileScreen()),
-      GoRoute(
-        path: AppRoutes.adminDashboard,
-        builder: (context, state) => const _RoleHomePlaceholderScreen(title: "Admin Dashboard"),
-      ),
+      GoRoute(path: AppRoutes.adminDashboard, builder: (context, state) => const AdminDashboardScreen()),
+      GoRoute(path: AppRoutes.adminUsers, builder: (context, state) => const AdminUsersScreen()),
+      GoRoute(path: AppRoutes.adminJobs, builder: (context, state) => const AdminJobsScreen()),
+      GoRoute(path: AppRoutes.adminApplications, builder: (context, state) => const AdminApplicationsScreen()),
     ],
   );
 });
@@ -135,79 +139,5 @@ class _RootScreen extends ConsumerWidget {
     final status = ref.watch(authProvider.select((s) => s.status));
     if (status == AuthStatus.unauthenticated) return const HomeScreen();
     return const SplashScreen();
-  }
-}
-
-/// Stand-in for the real admin dashboard, which lands in Phase 6 (seeker
-/// and recruiter dashboards are real as of Phases 4-5 — see
-/// `SeekerDashboardScreen` / `RecruiterDashboardScreen`). Proves role-based
-/// routing and logout work end-to-end for admin in the meantime.
-class _RoleHomePlaceholderScreen extends ConsumerWidget {
-  const _RoleHomePlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider).user;
-    final theme = Theme.of(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: "Log out",
-            onPressed: () => _confirmLogout(context, ref),
-          ),
-        ],
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
-                child: Text(
-                  (user?.name.isNotEmpty ?? false) ? user!.name[0].toUpperCase() : "?",
-                  style: theme.textTheme.headlineMedium?.copyWith(color: theme.colorScheme.primary),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text("Welcome, ${user?.name ?? ''}", style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 4),
-              Text(user?.email ?? '', style: theme.textTheme.bodyMedium),
-              const SizedBox(height: 24),
-              Text(
-                "This dashboard is built in a later phase — auth, role\nrouting and logout are already wired up.",
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Log out?"),
-        content: const Text("You'll need to log in again to continue."),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text("Cancel")),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text("Log out")),
-        ],
-      ),
-    );
-    if (confirmed == true) {
-      await ref.read(authProvider.notifier).logout();
-    }
   }
 }

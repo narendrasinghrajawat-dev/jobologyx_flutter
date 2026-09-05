@@ -7,8 +7,10 @@ import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/widgets/app_empty_widget.dart';
 import '../../../../core/widgets/app_error_widget.dart';
+import '../../../../core/widgets/app_filter_menu.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../../jobs/models/job_model.dart';
+import '../../../jobs/models/job_options.dart';
 import '../../providers/recruiter_jobs_provider.dart';
 import '../widgets/recruiter_job_card.dart';
 
@@ -79,17 +81,13 @@ class _RecruiterJobsScreenState extends ConsumerState<RecruiterJobsScreen> {
       appBar: AppBar(
         title: const Text("My Jobs"),
         actions: [
-          PopupMenuButton<String?>(
-            initialValue: state.statusFilter,
+          AppFilterMenu(
+            value: state.statusFilter,
+            options: JobOptions.jobStatuses,
+            onChanged: (value) => ref.read(recruiterJobsProvider.notifier).setStatusFilter(value),
+            icon: Icons.filter_list_rounded,
+            allLabel: "All Statuses",
             tooltip: "Filter by status",
-            onSelected: (value) => ref.read(recruiterJobsProvider.notifier).setStatusFilter(value),
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: null, child: Text("All Statuses")),
-              PopupMenuItem(value: "active", child: Text("Active")),
-              PopupMenuItem(value: "closed", child: Text("Closed")),
-              PopupMenuItem(value: "draft", child: Text("Draft")),
-            ],
-            icon: const Icon(Icons.filter_list_rounded),
           ),
         ],
       ),

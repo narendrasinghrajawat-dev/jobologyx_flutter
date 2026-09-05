@@ -6,13 +6,23 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/widgets/app_bottom_sheet.dart';
+import '../../../../core/widgets/app_dropdown.dart';
 import '../../../../core/widgets/app_empty_widget.dart';
 import '../../../../core/widgets/app_error_widget.dart';
+import '../../../../core/widgets/app_filter_menu.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../../applications/models/application_model.dart';
 import '../../providers/recruiter_applications_provider.dart';
 import '../../providers/recruiter_job_options_provider.dart';
 import '../widgets/recruiter_application_card.dart';
+
+const List<AppDropdownOption<String>> _applicationStatusOptions = [
+  AppDropdownOption(ApplicationStatus.applied, "Applied"),
+  AppDropdownOption(ApplicationStatus.reviewing, "Reviewing"),
+  AppDropdownOption(ApplicationStatus.shortlisted, "Shortlisted"),
+  AppDropdownOption(ApplicationStatus.rejected, "Rejected"),
+  AppDropdownOption(ApplicationStatus.hired, "Hired"),
+];
 
 class RecruiterApplicationsScreen extends ConsumerStatefulWidget {
   const RecruiterApplicationsScreen({super.key});
@@ -114,22 +124,16 @@ class _RecruiterApplicationsScreenState extends ConsumerState<RecruiterApplicati
         title: const Text("Applications"),
         actions: [
           IconButton(icon: const Icon(Icons.filter_list_rounded), tooltip: "Filter by job", onPressed: _openFilters),
-          PopupMenuButton<String?>(
-            initialValue: state.statusFilter,
-            tooltip: "Filter by status",
-            onSelected: (value) => ref.read(recruiterApplicationsProvider.notifier).setFilters(
+          AppFilterMenu(
+            value: state.statusFilter,
+            options: _applicationStatusOptions,
+            onChanged: (value) => ref.read(recruiterApplicationsProvider.notifier).setFilters(
                   status: value,
                   clearStatus: value == null,
                 ),
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: null, child: Text("All Statuses")),
-              PopupMenuItem(value: ApplicationStatus.applied, child: Text("Applied")),
-              PopupMenuItem(value: ApplicationStatus.reviewing, child: Text("Reviewing")),
-              PopupMenuItem(value: ApplicationStatus.shortlisted, child: Text("Shortlisted")),
-              PopupMenuItem(value: ApplicationStatus.rejected, child: Text("Rejected")),
-              PopupMenuItem(value: ApplicationStatus.hired, child: Text("Hired")),
-            ],
-            icon: const Icon(Icons.checklist_rounded),
+            icon: Icons.checklist_rounded,
+            allLabel: "All Statuses",
+            tooltip: "Filter by status",
           ),
         ],
       ),
