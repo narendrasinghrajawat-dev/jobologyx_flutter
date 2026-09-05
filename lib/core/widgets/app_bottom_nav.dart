@@ -74,3 +74,35 @@ class SeekerNavItems {
     ),
   ];
 }
+
+/// The recruiter's four tabs, in display order (§52).
+class RecruiterNavItems {
+  RecruiterNavItems._();
+
+  static const List<AppBottomNavItem> items = [
+    AppBottomNavItem(
+      icon: Icons.dashboard_outlined,
+      activeIcon: Icons.dashboard_rounded,
+      label: "Dashboard",
+      route: AppRoutes.recruiterDashboard,
+    ),
+    AppBottomNavItem(
+      icon: Icons.work_outline_rounded,
+      activeIcon: Icons.work_rounded,
+      label: "Jobs",
+      route: AppRoutes.recruiterJobs,
+    ),
+    AppBottomNavItem(
+      icon: Icons.article_outlined,
+      activeIcon: Icons.article_rounded,
+      label: "Applications",
+      route: AppRoutes.recruiterApplications,
+    ),
+    AppBottomNavItem(
+      icon: Icons.person_outline_rounded,
+      activeIcon: Icons.person_rounded,
+      label: "Profile",
+      route: AppRoutes.recruiterProfile,
+    ),
+  ];
+}

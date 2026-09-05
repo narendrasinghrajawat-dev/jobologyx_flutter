@@ -43,6 +43,27 @@ class ApplicationRepository {
       throw mapDioException(e);
     }
   }
+
+  Future<ApplicationListResult> getRecruiterApplications(Map<String, dynamic> queryParams) async {
+    try {
+      final data = await _api.getRecruiterApplications(queryParams);
+      final applications = (data["applications"] as List)
+          .map((a) => ApplicationModel.fromJson(a as Map<String, dynamic>))
+          .toList();
+      return (applications: applications, pagination: Pagination.fromJson(data["pagination"] as Map<String, dynamic>));
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
+  Future<ApplicationModel> updateApplicationStatus(String id, String status) async {
+    try {
+      final data = await _api.updateApplicationStatus(id, status);
+      return ApplicationModel.fromJson(data["application"] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 }
 
 final applicationRepositoryProvider = Provider<ApplicationRepository>((ref) {

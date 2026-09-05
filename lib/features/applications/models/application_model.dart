@@ -80,6 +80,25 @@ class ApplicationModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  /// The backend's `PATCH /applications/:id/status` returns the updated
+  /// document *without* re-populating `job`/`applicant` (unlike the list and
+  /// get-by-id endpoints), so callers that patch local state from that
+  /// response should use this to keep the already-known rich data instead
+  /// of overwriting it with bare id strings.
+  ApplicationModel copyWith({String? status}) {
+    return ApplicationModel(
+      id: id,
+      job: job,
+      applicant: applicant,
+      recruiter: recruiter,
+      resumeUrl: resumeUrl,
+      coverLetter: coverLetter,
+      status: status ?? this.status,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
+
   factory ApplicationModel.fromJson(Map<String, dynamic> json) {
     final recruiterField = json["recruiter"];
     return ApplicationModel(

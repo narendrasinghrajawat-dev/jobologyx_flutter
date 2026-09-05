@@ -32,6 +32,32 @@ class JobRepository {
       throw mapDioException(e);
     }
   }
+
+  Future<JobModel> createJob(Map<String, dynamic> data) async {
+    try {
+      final result = await _api.createJob(data);
+      return JobModel.fromJson(result["job"] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
+  Future<JobModel> updateJob(String id, Map<String, dynamic> data) async {
+    try {
+      final result = await _api.updateJob(id, data);
+      return JobModel.fromJson(result["job"] as Map<String, dynamic>);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
+
+  Future<void> deleteJob(String id) async {
+    try {
+      await _api.deleteJob(id);
+    } on DioException catch (e) {
+      throw mapDioException(e);
+    }
+  }
 }
 
 final jobRepositoryProvider = Provider<JobRepository>((ref) {

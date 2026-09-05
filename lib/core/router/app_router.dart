@@ -13,7 +13,12 @@ import '../../features/jobs/presentation/screens/home_screen.dart';
 import '../../features/jobs/presentation/screens/job_details_screen.dart';
 import '../../features/jobs/presentation/screens/job_list_screen.dart';
 import '../../features/jobs/presentation/screens/seeker_dashboard_screen.dart';
+import '../../features/profile/presentation/screens/recruiter_profile_screen.dart';
 import '../../features/profile/presentation/screens/seeker_profile_screen.dart';
+import '../../features/recruiter/presentation/screens/create_edit_job_screen.dart';
+import '../../features/recruiter/presentation/screens/recruiter_applications_screen.dart';
+import '../../features/recruiter/presentation/screens/recruiter_dashboard_screen.dart';
+import '../../features/recruiter/presentation/screens/recruiter_jobs_screen.dart';
 import 'app_routes.dart';
 
 /// Public/guest-accessible routes — a signed-out visitor can browse these
@@ -101,10 +106,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ApplicationDetailsScreen(applicationId: state.pathParameters["id"]!),
       ),
       GoRoute(path: AppRoutes.seekerProfile, builder: (context, state) => const SeekerProfileScreen()),
+      GoRoute(path: AppRoutes.recruiterDashboard, builder: (context, state) => const RecruiterDashboardScreen()),
+      GoRoute(path: AppRoutes.recruiterJobs, builder: (context, state) => const RecruiterJobsScreen()),
+      GoRoute(path: AppRoutes.recruiterJobCreate, builder: (context, state) => const CreateEditJobScreen()),
       GoRoute(
-        path: AppRoutes.recruiterDashboard,
-        builder: (context, state) => const _RoleHomePlaceholderScreen(title: "Recruiter Dashboard"),
+        path: AppRoutes.recruiterJobEdit,
+        builder: (context, state) => CreateEditJobScreen(jobId: state.pathParameters["id"]!),
       ),
+      GoRoute(path: AppRoutes.recruiterApplications, builder: (context, state) => const RecruiterApplicationsScreen()),
+      GoRoute(path: AppRoutes.recruiterProfile, builder: (context, state) => const RecruiterProfileScreen()),
       GoRoute(
         path: AppRoutes.adminDashboard,
         builder: (context, state) => const _RoleHomePlaceholderScreen(title: "Admin Dashboard"),
@@ -128,10 +138,10 @@ class _RootScreen extends ConsumerWidget {
   }
 }
 
-/// Stand-in for the real recruiter/admin dashboards, which land in Phases
-/// 5–6 (the seeker dashboard is real as of Phase 4 — see
-/// `SeekerDashboardScreen`). Proves role-based routing and logout work
-/// end-to-end for these roles in the meantime.
+/// Stand-in for the real admin dashboard, which lands in Phase 6 (seeker
+/// and recruiter dashboards are real as of Phases 4-5 — see
+/// `SeekerDashboardScreen` / `RecruiterDashboardScreen`). Proves role-based
+/// routing and logout work end-to-end for admin in the meantime.
 class _RoleHomePlaceholderScreen extends ConsumerWidget {
   const _RoleHomePlaceholderScreen({required this.title});
 

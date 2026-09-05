@@ -49,4 +49,11 @@ class JobOptions {
     AppDropdownOption("salaryHigh", "Salary: High to Low"),
     AppDropdownOption("salaryLow", "Salary: Low to High"),
   ];
+
+  /// Recruiter-facing job status choices, for the create/edit job form.
+  static const List<AppDropdownOption<String>> jobStatuses = [
+    AppDropdownOption("active", "Active"),
+    AppDropdownOption("closed", "Closed"),
+    AppDropdownOption("draft", "Draft"),
+  ];
 }

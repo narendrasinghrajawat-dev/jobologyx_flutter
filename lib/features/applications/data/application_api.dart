@@ -2,8 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_endpoints.dart';
 
-/// Raw HTTP calls for the job-seeker side of applications. Recruiter/admin
-/// endpoints (`/applications/recruiter`, status updates) land in Phase 5-6.
+/// Raw HTTP calls for applications — job-seeker side (Phase 4) and
+/// recruiter side (Phase 5). Admin's `/admin/applications` is separate.
 class ApplicationApi {
   ApplicationApi(this._dio);
 
@@ -24,6 +24,16 @@ class ApplicationApi {
 
   Future<Map<String, dynamic>> getApplicationById(String id) async {
     final response = await _dio.get(ApiEndpoints.applicationById(id));
+    return response.data["data"] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> getRecruiterApplications(Map<String, dynamic> queryParams) async {
+    final response = await _dio.get(ApiEndpoints.recruiterApplications, queryParameters: queryParams);
+    return response.data["data"] as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateApplicationStatus(String id, String status) async {
+    final response = await _dio.patch(ApiEndpoints.applicationStatus(id), data: {"status": status});
     return response.data["data"] as Map<String, dynamic>;
   }
 }
