@@ -74,12 +74,14 @@ jobs:
             --build-number=${{ github.run_number }} 2>&1 | tee build-apk.log
 
       # Job logs require sign-in to view on this repo, but annotations don't —
-      # so on failure, republish the tail of the build log as ::error::
-      # annotations to make the real Gradle/Flutter error visible without auth.
+      # so on failure, republish the actual failure section (not just the
+      # trailing "packages have newer versions" footer flutter always prints)
+      # as ::error:: annotations to make the real error visible without auth.
       - name: Surface build failure details
         if: steps.build_apk.outcome == 'failure'
         run: |
-          tail -n 60 build-apk.log | while IFS= read -r line; do
+          (grep -n -iE "FAILURE:|error:|exception|BUILD FAILED|Execution failed|what went wrong" build-apk.log -A 25 \
+            || tail -n 80 build-apk.log) | tail -n 100 | while IFS= read -r line; do
             printf '::error::%s\n' "$line"
           done
           exit 1
