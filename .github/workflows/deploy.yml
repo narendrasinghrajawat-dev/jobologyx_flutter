@@ -65,10 +65,24 @@ jobs:
       # (no keystore secrets configured), so this produces an installable-for-
       # testing APK, not a Play Store-ready one.
       - name: Build release APK
+        id: build_apk
+        continue-on-error: true
         run: |
+          set -o pipefail
           flutter build apk --release \
             --build-name=${{ steps.version.outputs.version }} \
-            --build-number=${{ github.run_number }}
+            --build-number=${{ github.run_number }} 2>&1 | tee build-apk.log
+
+      # Job logs require sign-in to view on this repo, but annotations don't —
+      # so on failure, republish the tail of the build log as ::error::
+      # annotations to make the real Gradle/Flutter error visible without auth.
+      - name: Surface build failure details
+        if: steps.build_apk.outcome == 'failure'
+        run: |
+          tail -n 60 build-apk.log | while IFS= read -r line; do
+            printf '::error::%s\n' "$line"
+          done
+          exit 1
 
       - name: Rename APK for the release asset
         run: |
