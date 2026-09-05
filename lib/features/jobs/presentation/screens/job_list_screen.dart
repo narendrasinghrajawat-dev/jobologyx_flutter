@@ -4,11 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_dimens.dart';
+import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../../core/widgets/app_bottom_sheet.dart';
 import '../../../../core/widgets/app_empty_widget.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../../../core/widgets/app_search_bar.dart';
+import '../../../auth/models/user_model.dart';
+import '../../../auth/providers/auth_provider.dart';
 import '../../providers/job_list_provider.dart';
 import '../widgets/job_card.dart';
 import '../widgets/job_filter_sheet.dart';
@@ -61,6 +64,8 @@ class _JobListScreenState extends ConsumerState<JobListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(jobListProvider);
+    final user = ref.watch(authProvider).user;
+    final showSeekerNav = user?.role == UserRole.jobSeeker;
 
     ref.listen(jobListProvider.select((s) => s.loadMoreError), (previous, next) {
       if (next != null && next != previous) {
@@ -71,6 +76,7 @@ class _JobListScreenState extends ConsumerState<JobListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Jobs"),
+        automaticallyImplyLeading: !showSeekerNav,
         actions: [
           IconButton(
             icon: Icon(state.filter.hasActiveFilters ? Icons.filter_alt_rounded : Icons.filter_alt_outlined),
@@ -79,6 +85,7 @@ class _JobListScreenState extends ConsumerState<JobListScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: showSeekerNav ? const AppBottomNav(currentIndex: 1, items: SeekerNavItems.items) : null,
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(

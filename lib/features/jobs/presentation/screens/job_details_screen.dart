@@ -6,9 +6,12 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_dimens.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_avatar.dart';
+import '../../../../core/widgets/app_bottom_sheet.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_error_widget.dart';
 import '../../../../core/widgets/app_loader.dart';
+import '../../../applications/presentation/widgets/apply_bottom_sheet.dart';
+import '../../../applications/providers/applied_job_ids_provider.dart';
 import '../../../auth/models/user_model.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../models/job_model.dart';
@@ -144,19 +147,28 @@ class _JobDetailsBody extends ConsumerWidget {
     String label;
     VoidCallback? onPressed;
 
+    // Only fetched for a signed-in seeker — a guest has no applications to
+    // check, and the endpoint requires auth anyway.
+    final hasApplied = user != null &&
+        ref.watch(appliedJobIdsProvider).maybeWhen(data: (ids) => ids.contains(job.id), orElse: () => false);
+
     if (!job.isAcceptingApplications) {
       label = "Applications Closed";
       onPressed = null;
     } else if (user == null) {
       label = "Sign In to Apply";
       onPressed = () => context.push(AppRoutes.login);
+    } else if (hasApplied) {
+      label = "Already Applied";
+      onPressed = null;
     } else {
       label = "Apply Now";
-      // The apply flow (cover letter + submission) is built in Phase 4
-      // alongside the rest of the applications feature.
-      onPressed = () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Applying is available once the Applications feature ships in Phase 4.")),
-          );
+      onPressed = () async {
+        final applied = await AppBottomSheet.show<bool>(context, builder: (context) => ApplyBottomSheet(job: job));
+        if (applied == true && context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Application submitted!")));
+        }
+      };
     }
 
     return Container(

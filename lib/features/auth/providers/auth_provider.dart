@@ -94,6 +94,13 @@ class AuthNotifier extends Notifier<AuthState> {
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
+  /// Refreshes the cached user after a profile edit or image/resume upload.
+  /// Keeps `AuthNotifier` the single source of truth for "current user" —
+  /// the profile feature updates it here rather than caching its own copy.
+  void updateUser(UserModel user) {
+    state = state.copyWith(user: user);
+  }
+
   Future<void> _forceLogout() async {
     await _storage.deleteToken();
     state = const AuthState(

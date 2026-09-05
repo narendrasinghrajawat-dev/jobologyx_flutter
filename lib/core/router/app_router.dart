@@ -7,9 +7,13 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/applications/presentation/screens/application_details_screen.dart';
+import '../../features/applications/presentation/screens/my_applications_screen.dart';
 import '../../features/jobs/presentation/screens/home_screen.dart';
 import '../../features/jobs/presentation/screens/job_details_screen.dart';
 import '../../features/jobs/presentation/screens/job_list_screen.dart';
+import '../../features/jobs/presentation/screens/seeker_dashboard_screen.dart';
+import '../../features/profile/presentation/screens/seeker_profile_screen.dart';
 import 'app_routes.dart';
 
 /// Public/guest-accessible routes — a signed-out visitor can browse these
@@ -90,10 +94,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.seekerJobDetails,
         builder: (context, state) => JobDetailsScreen(jobId: state.pathParameters["id"]!),
       ),
+      GoRoute(path: AppRoutes.seekerDashboard, builder: (context, state) => const SeekerDashboardScreen()),
+      GoRoute(path: AppRoutes.seekerApplications, builder: (context, state) => const MyApplicationsScreen()),
       GoRoute(
-        path: AppRoutes.seekerDashboard,
-        builder: (context, state) => const _RoleHomePlaceholderScreen(title: "Job Seeker Dashboard"),
+        path: AppRoutes.seekerApplicationDetails,
+        builder: (context, state) => ApplicationDetailsScreen(applicationId: state.pathParameters["id"]!),
       ),
+      GoRoute(path: AppRoutes.seekerProfile, builder: (context, state) => const SeekerProfileScreen()),
       GoRoute(
         path: AppRoutes.recruiterDashboard,
         builder: (context, state) => const _RoleHomePlaceholderScreen(title: "Recruiter Dashboard"),
@@ -121,8 +128,10 @@ class _RootScreen extends ConsumerWidget {
   }
 }
 
-/// Stand-in for the real seeker/recruiter/admin dashboards, which land in
-/// Phases 4–6. Proves role-based routing and logout work end-to-end now.
+/// Stand-in for the real recruiter/admin dashboards, which land in Phases
+/// 5–6 (the seeker dashboard is real as of Phase 4 — see
+/// `SeekerDashboardScreen`). Proves role-based routing and logout work
+/// end-to-end for these roles in the meantime.
 class _RoleHomePlaceholderScreen extends ConsumerWidget {
   const _RoleHomePlaceholderScreen({required this.title});
 
@@ -168,14 +177,6 @@ class _RoleHomePlaceholderScreen extends ConsumerWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall,
               ),
-              if (user?.role == UserRole.jobSeeker) ...[
-                const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  onPressed: () => context.push(AppRoutes.seekerJobs),
-                  icon: const Icon(Icons.search_rounded),
-                  label: const Text("Browse Jobs"),
-                ),
-              ],
             ],
           ),
         ),
