@@ -6,7 +6,11 @@ plugins {
 
 android {
     namespace = "com.jobologyx.jobologyx_flutter"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned explicitly (not flutter.compileSdkVersion): a plugin's AAR
+    // (flutter_plugin_android_lifecycle, pulled in transitively) requires a
+    // newer compileSdk than this Flutter version's own default declares —
+    // CheckAarMetadataWorkAction fails otherwise (checkReleaseAarMetadata).
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
